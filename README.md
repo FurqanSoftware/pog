@@ -5,6 +5,11 @@ Pog is a simple logger for Go with a status indicator.
 ## Usage
 
 ``` go
+import (
+	"github.com/FurqanSoftware/pog"
+	"github.com/fatih/color"
+)
+
 type pogStatus struct {
 	icon  byte
 	text  string
