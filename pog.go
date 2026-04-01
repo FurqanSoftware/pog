@@ -131,6 +131,8 @@ func (p *Pogger) loop() {
 	if p.logger.Flags() != 0 {
 		pad = strings.Repeat(" ", 20)
 	}
+	ticker := time.NewTicker(125 * time.Millisecond)
+	defer ticker.Stop()
 L:
 	for i := 0; ; i = (i + 1) % 10 {
 		var s string
@@ -154,7 +156,7 @@ L:
 		select {
 		case <-p.stopCh:
 			break L
-		case <-time.After(125 * time.Millisecond):
+		case <-ticker.C:
 		}
 	}
 }
