@@ -148,7 +148,9 @@ func (p *Pogger) Fatalf(format string, v ...any) {
 // AddExitHook registers a function to be called before os.Exit when a Fatal
 // method is invoked.
 func (p *Pogger) AddExitHook(fn func()) {
+	p.m.Lock()
 	p.exitHooks = append(p.exitHooks, fn)
+	p.m.Unlock()
 }
 
 // Stop stops the background goroutine that manages the status line.
@@ -193,7 +195,11 @@ L:
 }
 
 func (p *Pogger) exit(code int) {
-	for _, fn := range p.exitHooks {
+	p.m.Lock()
+	hooks := make([]func(), len(p.exitHooks))
+	copy(hooks, p.exitHooks)
+	p.m.Unlock()
+	for _, fn := range hooks {
 		fn()
 	}
 	os.Exit(code)
