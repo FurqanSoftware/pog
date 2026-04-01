@@ -4,6 +4,10 @@
 
 Pog is a simple logger for Go with a status indicator.
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/FurqanSoftware/pog.svg)](https://pkg.go.dev/github.com/FurqanSoftware/pog)
+
+We use Pog in [Toph Printd](https://github.com/FurqanSoftware/toph-printd).
+
 ## Usage
 
 ``` go
