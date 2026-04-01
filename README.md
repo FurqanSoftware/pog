@@ -1,5 +1,7 @@
 # Pog
 
+[![CI](https://github.com/FurqanSoftware/pog/actions/workflows/ci.yml/badge.svg)](https://github.com/FurqanSoftware/pog/actions/workflows/ci.yml)
+
 Pog is a simple logger for Go with a status indicator.
 
 ## Usage
@@ -68,4 +70,26 @@ pog.SetStatus(statusOffline)
 2023/10/18 11:59:19 [w] That's a lot of words.
 2023/10/18 11:59:57 [E] Lost connection.
                     [!] Offline
+```
+
+## Log Levels
+
+| Level | Indicator | Variants |
+|-------|-----------|----------|
+| Debug | `[d]` | `Debug`, `Debugln`, `Debugf` |
+| Info  | `[i]` | `Info`, `Infoln`, `Infof` |
+| Warn  | `[w]` | `Warn`, `Warnln`, `Warnf` |
+| Error | `[E]` | `Error`, `Errorln`, `Errorf` |
+| Fatal | `[E]` | `Fatal`, `Fatalln`, `Fatalf` |
+
+Fatal functions log at the Error level and then exit, running any registered exit hooks.
+
+## Exit Hooks
+
+Register functions to run before a `Fatal` exit:
+
+``` go
+pog.AddExitHook(func() {
+	// Clean up resources.
+})
 ```
