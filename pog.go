@@ -23,6 +23,7 @@ type Pogger struct {
 	logger    *log.Logger
 	status    Status
 	stopCh    chan struct{}
+	stopOnce  sync.Once
 	m         sync.Mutex
 	initOnce  sync.Once
 	exitHooks []func()
@@ -153,9 +154,12 @@ func (p *Pogger) AddExitHook(fn func()) {
 	p.m.Unlock()
 }
 
-// Stop stops the background goroutine that manages the status line.
+// Stop stops the background goroutine that manages the status line. It is safe
+// to call multiple times.
 func (p *Pogger) Stop() {
-	close(p.stopCh)
+	p.stopOnce.Do(func() {
+		close(p.stopCh)
+	})
 }
 
 func (p *Pogger) loop() {
@@ -211,6 +215,7 @@ L:
 }
 
 func (p *Pogger) exit(code int) {
+	p.Stop()
 	p.m.Lock()
 	hooks := make([]func(), len(p.exitHooks))
 	copy(hooks, p.exitHooks)
