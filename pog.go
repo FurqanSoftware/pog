@@ -162,27 +162,29 @@ func (p *Pogger) Stop() {
 	})
 }
 
+func (p *Pogger) prefixLen() int {
+	n := len(p.logger.Prefix())
+	flags := p.logger.Flags()
+	if flags&(log.Ldate|log.Ltime|log.Lmicroseconds) != 0 {
+		if flags&log.Ldate != 0 {
+			n += len("2006/01/02 ")
+		}
+		if flags&(log.Ltime|log.Lmicroseconds) != 0 {
+			if flags&log.Lmicroseconds != 0 {
+				n += len("15:04:05.000000 ")
+			} else {
+				n += len("15:04:05 ")
+			}
+		}
+	}
+	return n
+}
+
 func (p *Pogger) loop() {
 	cur := ""
 	pad := ""
-	{
-		n := len(p.logger.Prefix())
-		flags := p.logger.Flags()
-		if flags&(log.Ldate|log.Ltime|log.Lmicroseconds) != 0 {
-			if flags&log.Ldate != 0 {
-				n += len("2006/01/02 ")
-			}
-			if flags&(log.Ltime|log.Lmicroseconds) != 0 {
-				if flags&log.Lmicroseconds != 0 {
-					n += len("15:04:05.000000 ")
-				} else {
-					n += len("15:04:05 ")
-				}
-			}
-		}
-		if n > 0 {
-			pad = strings.Repeat(" ", n)
-		}
+	if n := p.prefixLen(); n > 0 {
+		pad = strings.Repeat(" ", n)
 	}
 	ticker := time.NewTicker(125 * time.Millisecond)
 	defer ticker.Stop()
